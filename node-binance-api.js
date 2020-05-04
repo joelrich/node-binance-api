@@ -958,6 +958,10 @@ let api = function Binance() {
         return s.size === array.length;
     };
     return {
+
+        base, wapi, sapi, fapi,
+        promiseRequest,
+
         /**
         * Gets depth cache for given symbol
         * @param {symbol} symbol - get depch cache for this symbol
