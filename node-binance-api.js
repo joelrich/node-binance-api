@@ -10,7 +10,7 @@
 let api = function Binance() {
     let Binance = this; // eslint-disable-line consistent-this
     'use strict'; // eslint-disable-line no-unused-expressions
-    
+
     const WebSocket = require( 'ws' );
     const request = require( 'request' );
     const crypto = require( 'crypto' );
@@ -42,7 +42,8 @@ let api = function Binance() {
         test: false,
         log: function ( ...args ) {
             console.log( Array.prototype.slice.call( args ) );
-        }
+        },
+        depth: 'depth'
     };
     Binance.options = default_options;
     Binance.info = { timeOffset: 0 };
@@ -1218,6 +1219,7 @@ let api = function Binance() {
                     if ( callback ) callback();
                 } );
             } else if ( callback ) callback();
+            if ( typeof Binance.options.depth === 'undefined' ) Binance.options.depth = default_options.depth;
             return this;
         },
 
@@ -2794,12 +2796,12 @@ let api = function Binance() {
                 if ( Array.isArray( symbols ) ) {
                     if ( !isArrayUnique( symbols ) ) throw Error( 'depth: "symbols" cannot contain duplicate elements.' );
                     let streams = symbols.map( function ( symbol ) {
-                        return symbol.toLowerCase() + '@depth';
+                        return symbol.toLowerCase() + '@' + this.options.depth;
                     } );
                     subscription = subscribeCombined( streams, callback, reconnect );
                 } else {
                     let symbol = symbols;
-                    subscription = subscribe( symbol.toLowerCase() + '@depth', callback, reconnect );
+                    subscription = subscribe( symbol.toLowerCase() + '@' + this.options.depth, callback, reconnect );
                 }
                 return subscription.endpoint;
             },
@@ -2889,7 +2891,7 @@ let api = function Binance() {
                     if ( !isArrayUnique( symbols ) ) throw Error( 'depthCache: "symbols" cannot contain duplicate elements.' );
                     symbols.forEach( symbolDepthInit );
                     let streams = symbols.map( function ( symbol ) {
-                        return symbol.toLowerCase() + '@depth';
+                        return symbol.toLowerCase() + '@' + this.options.depth;
                     } );
                     subscription = subscribeCombined( streams, handleDepthStreamData, reconnect, function () {
                         async.mapLimit( symbols, 50, getSymbolDepthSnapshot, ( err, results ) => {
@@ -2901,7 +2903,7 @@ let api = function Binance() {
                 } else {
                     let symbol = symbols;
                     symbolDepthInit( symbol );
-                    subscription = subscribe( symbol.toLowerCase() + '@depth', handleDepthStreamData, reconnect, function () {
+                    subscription = subscribe( symbol.toLowerCase() + '@' + this.options.depth, handleDepthStreamData, reconnect, function () {
                         async.mapLimit( [symbol], 1, getSymbolDepthSnapshot, ( err, results ) => {
                             if ( err ) throw err;
                             results.forEach( updateSymbolDepthCache );
