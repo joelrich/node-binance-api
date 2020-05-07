@@ -2795,7 +2795,7 @@ let api = function Binance() {
                 let subscription;
                 if ( Array.isArray( symbols ) ) {
                     if ( !isArrayUnique( symbols ) ) throw Error( 'depth: "symbols" cannot contain duplicate elements.' );
-                    let streams = symbols.map( function ( symbol ) {
+                    let streams = symbols.map( ( symbol ) => {
                         return symbol.toLowerCase() + '@' + this.options.depth;
                     } );
                     subscription = subscribeCombined( streams, callback, reconnect );
@@ -2890,7 +2890,7 @@ let api = function Binance() {
                 if ( Array.isArray( symbols ) ) {
                     if ( !isArrayUnique( symbols ) ) throw Error( 'depthCache: "symbols" cannot contain duplicate elements.' );
                     symbols.forEach( symbolDepthInit );
-                    let streams = symbols.map( function ( symbol ) {
+                    let streams = symbols.map( ( symbol ) => {
                         return symbol.toLowerCase() + '@' + this.options.depth;
                     } );
                     subscription = subscribeCombined( streams, handleDepthStreamData, reconnect, function () {
