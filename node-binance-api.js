@@ -2795,13 +2795,13 @@ let api = function Binance() {
                 let subscription;
                 if ( Array.isArray( symbols ) ) {
                     if ( !isArrayUnique( symbols ) ) throw Error( 'depth: "symbols" cannot contain duplicate elements.' );
-                    let streams = symbols.map( ( symbol ) => {
-                        return symbol.toLowerCase() + '@' + this.options.depth;
+                    let streams = symbols.map( function ( symbol ) {
+                        return symbol.toLowerCase() + '@' + Binance.options.depth;
                     } );
                     subscription = subscribeCombined( streams, callback, reconnect );
                 } else {
                     let symbol = symbols;
-                    subscription = subscribe( symbol.toLowerCase() + '@' + this.options.depth, callback, reconnect );
+                    subscription = subscribe( symbol.toLowerCase() + '@' + Binance.options.depth, callback, reconnect );
                 }
                 return subscription.endpoint;
             },
@@ -2890,8 +2890,8 @@ let api = function Binance() {
                 if ( Array.isArray( symbols ) ) {
                     if ( !isArrayUnique( symbols ) ) throw Error( 'depthCache: "symbols" cannot contain duplicate elements.' );
                     symbols.forEach( symbolDepthInit );
-                    let streams = symbols.map( ( symbol ) => {
-                        return symbol.toLowerCase() + '@' + this.options.depth;
+                    let streams = symbols.map( function ( symbol ) {
+                        return symbol.toLowerCase() + '@' + Binance.options.depth;
                     } );
                     subscription = subscribeCombined( streams, handleDepthStreamData, reconnect, function () {
                         async.mapLimit( symbols, 50, getSymbolDepthSnapshot, ( err, results ) => {
@@ -2903,7 +2903,7 @@ let api = function Binance() {
                 } else {
                     let symbol = symbols;
                     symbolDepthInit( symbol );
-                    subscription = subscribe( symbol.toLowerCase() + '@' + this.options.depth, handleDepthStreamData, reconnect, function () {
+                    subscription = subscribe( symbol.toLowerCase() + '@' + Binance.options.depth, handleDepthStreamData, reconnect, function () {
                         async.mapLimit( [symbol], 1, getSymbolDepthSnapshot, ( err, results ) => {
                             if ( err ) throw err;
                             results.forEach( updateSymbolDepthCache );
